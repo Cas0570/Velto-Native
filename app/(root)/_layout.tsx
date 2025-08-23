@@ -1,22 +1,6 @@
-import { Stack, router } from 'expo-router';
-import { useEffect } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { Stack } from 'expo-router';
 
-const RootLayout = () => {
-  const { isAuthenticated, user } = useAuthStore();
-
-  useEffect(() => {
-    // Redirect to auth if not authenticated
-    if (!isAuthenticated || !user) {
-      router.replace('/(auth)/welcome');
-    }
-  }, [isAuthenticated, user]);
-
-  // Don't render anything if not authenticated
-  if (!isAuthenticated || !user) {
-    return null;
-  }
-
+const Layout = () => {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -24,4 +8,4 @@ const RootLayout = () => {
   );
 };
 
-export default RootLayout;
+export default Layout;
