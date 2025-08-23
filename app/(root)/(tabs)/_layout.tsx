@@ -23,6 +23,7 @@ export default function TabLayout() {
         name="dashboard"
         options={{
           title: 'Dashboard',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="dashboard" size={size} color={color} />
           ),
@@ -32,6 +33,7 @@ export default function TabLayout() {
         name="invoices"
         options={{
           title: 'Invoices',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="receipt" size={size} color={color} />
           ),
@@ -41,6 +43,7 @@ export default function TabLayout() {
         name="new-invoice"
         options={{
           title: 'New Invoice',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="add-circle" size={size} color={color} />
           ),
@@ -50,6 +53,7 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Settings',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="settings" size={size} color={color} />
           ),
