@@ -19,7 +19,7 @@ export default function Dashboard() {
     <SafeAreaView className="flex-1 bg-gray-50">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View className="px-6 py-4 bg-white">
+        <View className="px-6 py-4">
           <View className="flex-row items-center mb-2">
             <View className="w-10 h-10 bg-primary-500 rounded-lg items-center justify-center mr-3">
               <Text className="text-white font-JakartaBold text-lg">V</Text>
@@ -92,7 +92,7 @@ export default function Dashboard() {
                 </Text>
               </View>
               <View className="items-center">
-                <Text className="text-2xl font-JakartaBold text-blue-600 mb-1">
+                <Text className="text-2xl font-JakartaBold text-orange-500 mb-1">
                   {sentCount}
                 </Text>
                 <Text className="text-sm text-gray-600 font-Jakarta">
