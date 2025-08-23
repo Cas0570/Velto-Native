@@ -50,3 +50,39 @@ export const onboarding = [
     image: images.placeholder,
   },
 ];
+
+// MOCK DATA
+export const mockInvoices = [
+  {
+    id: '001',
+    clientName: 'Acme BV',
+    invoiceNumber: '#001',
+    date: '2024-01-15',
+    amount: 1250.0,
+    status: 'paid' as const,
+  },
+  {
+    id: '002',
+    clientName: 'Tech Solutions',
+    invoiceNumber: '#002',
+    date: '2024-01-12',
+    amount: 850.5,
+    status: 'sent' as const,
+  },
+  {
+    id: '003',
+    clientName: 'Creative Agency',
+    invoiceNumber: '#003',
+    date: '2024-01-10',
+    amount: 2100.0,
+    status: 'overdue' as const,
+  },
+  {
+    id: '004',
+    clientName: 'StartupXYZ',
+    invoiceNumber: '#004',
+    date: '2024-01-08',
+    amount: 750.0,
+    status: 'draft' as const,
+  },
+];

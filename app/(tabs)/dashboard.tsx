@@ -1,20 +1,188 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
+import { mockInvoices } from '@/constants';
+import { getStatusColor, getStatusText, formatCurrency } from '@/utils';
 
 export default function Dashboard() {
+  const totalOutstanding = 2950;
+  const thisMonth = 4200;
+  const monthlyGrowth = 12;
+  const invoiceCount = mockInvoices.length;
+  const paidCount = mockInvoices.filter((inv) => inv.status === 'paid').length;
+  const sentCount = mockInvoices.filter((inv) => inv.status === 'sent').length;
+  const overdueCount = mockInvoices.filter(
+    (inv) => inv.status === 'overdue'
+  ).length;
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 p-4">
-        <Text className="text-2xl font-bold text-gray-800 mb-4">Dashboard</Text>
-        <Text className="text-gray-600">
-          Welcome to Velto! Your invoicing dashboard will show:
-        </Text>
-        <View className="mt-4 space-y-2">
-          <Text className="text-gray-600">• Open balance</Text>
-          <Text className="text-gray-600">• Total paid</Text>
-          <Text className="text-gray-600">• Recent invoices with status</Text>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View className="px-6 py-4 bg-white">
+          <View className="flex-row items-center mb-2">
+            <View className="w-10 h-10 bg-primary-500 rounded-lg items-center justify-center mr-3">
+              <Text className="text-white font-JakartaBold text-lg">V</Text>
+            </View>
+            <View>
+              <Text className="text-2xl font-JakartaBold text-gray-800">
+                Welkom terug!
+              </Text>
+              <Text className="text-gray-500 font-Jakarta">
+                Hier is je overzicht
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
+
+        {/* Main Stats Cards */}
+        <View className="px-6 py-4">
+          <View className="flex-row gap-x-4">
+            {/* Outstanding Amount */}
+            <View className="flex-1 bg-white rounded-2xl p-6 shadow-sm">
+              <View className="flex-row items-center justify-between mb-2">
+                <Text className="text-gray-600 font-JakartaMedium">
+                  Openstaand
+                </Text>
+                <View className="w-8 h-8 bg-blue-100 rounded-full items-center justify-center">
+                  <MaterialIcons name="euro" size={16} color="#3b82f6" />
+                </View>
+              </View>
+              <Text className="text-2xl font-JakartaBold text-gray-900 mb-1">
+                {formatCurrency(totalOutstanding)}
+              </Text>
+              <Text className="text-sm text-gray-500 font-Jakarta">
+                {invoiceCount} facturen
+              </Text>
+            </View>
+
+            {/* This Month */}
+            <View className="flex-1 bg-white rounded-2xl p-6 shadow-sm">
+              <View className="flex-row items-center justify-between mb-2">
+                <Text className="text-gray-600 font-JakartaMedium">
+                  Deze maand
+                </Text>
+                <View className="w-8 h-8 bg-green-100 rounded-full items-center justify-center">
+                  <MaterialIcons name="trending-up" size={16} color="#10b981" />
+                </View>
+              </View>
+              <Text className="text-2xl font-JakartaBold text-gray-900 mb-1">
+                {formatCurrency(thisMonth)}
+              </Text>
+              <Text className="text-sm text-green-600 font-Jakarta">
+                +{monthlyGrowth}% vs vorige maand
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Status Overview */}
+        <View className="px-6 py-2">
+          <View className="bg-white rounded-2xl p-6 shadow-sm">
+            <Text className="text-lg font-JakartaSemiBold text-gray-800 mb-4">
+              Status overzicht
+            </Text>
+            <View className="flex-row justify-between">
+              <View className="items-center">
+                <Text className="text-2xl font-JakartaBold text-green-600 mb-1">
+                  {paidCount}
+                </Text>
+                <Text className="text-sm text-gray-600 font-Jakarta">
+                  Betaald
+                </Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-2xl font-JakartaBold text-blue-600 mb-1">
+                  {sentCount}
+                </Text>
+                <Text className="text-sm text-gray-600 font-Jakarta">
+                  Verzonden
+                </Text>
+              </View>
+              <View className="items-center">
+                <Text className="text-2xl font-JakartaBold text-red-600 mb-1">
+                  {overdueCount}
+                </Text>
+                <Text className="text-sm text-gray-600 font-Jakarta">
+                  Te laat
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Recent Invoices */}
+        <View className="px-6 py-4">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-lg font-JakartaSemiBold text-gray-800">
+              Recente Facturen
+            </Text>
+            <TouchableOpacity>
+              <Text className="text-primary-500 font-JakartaMedium">
+                Bekijk alle
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            {mockInvoices.map((invoice, index) => (
+              <TouchableOpacity
+                key={invoice.id}
+                className={`p-4 flex-row items-center justify-between ${
+                  index !== mockInvoices.length - 1
+                    ? 'border-b border-gray-100'
+                    : ''
+                }`}
+              >
+                <View className="flex-row items-center flex-1">
+                  <View className="w-10 h-10 bg-gray-100 rounded-lg items-center justify-center mr-3">
+                    <MaterialIcons name="receipt" size={20} color="#6b7280" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="font-JakartaSemiBold text-gray-900">
+                      {invoice.clientName}
+                    </Text>
+                    <Text className="text-sm text-gray-500 font-Jakarta">
+                      {invoice.invoiceNumber} • {invoice.date}
+                    </Text>
+                  </View>
+                </View>
+                <View className="items-end">
+                  <Text className="font-JakartaBold text-gray-900 mb-1">
+                    {formatCurrency(invoice.amount)}
+                  </Text>
+                  <View
+                    className={`px-2 py-1 rounded-full ${getStatusColor(
+                      invoice.status
+                    )}`}
+                  >
+                    <Text className="text-xs font-JakartaMedium">
+                      {getStatusText(invoice.status)}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Free Plan Notice */}
+        <View className="px-6 py-4 pb-8">
+          <View className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex-row items-center">
+            <View className="w-8 h-8 bg-amber-100 rounded-full items-center justify-center mr-3">
+              <MaterialIcons name="info" size={20} color="#f59e0b" />
+            </View>
+            <View className="flex-1">
+              <Text className="font-JakartaSemiBold text-amber-800">
+                Gratis plan
+              </Text>
+              <Text className="text-sm text-amber-700 font-Jakarta">
+                3 van 5 facturen gebruikt deze maand
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

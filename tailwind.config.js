@@ -46,6 +46,7 @@ module.exports = {
           700: '#EBEBEB',
           800: '#ADADAD',
         },
+        background: '#fafafa',
       },
     },
   },
