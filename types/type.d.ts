@@ -20,7 +20,9 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
 }
 
-// Invoice related types
+export type InvoiceStatus = 'all' | 'draft' | 'sent' | 'paid' | 'overdue';
+
+// Possible types?????
 export interface Invoice {
   id: string;
   invoiceNumber: string;

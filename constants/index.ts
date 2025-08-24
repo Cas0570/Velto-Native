@@ -1,3 +1,5 @@
+import type { InvoiceStatus } from '@/types/type';
+
 import placeholder from '@/assets/images/placeholder.png';
 import onboarding1 from '@/assets/images/onboarding1.png';
 import onboarding2 from '@/assets/images/onboarding2.png';
@@ -49,6 +51,14 @@ export const onboarding = [
     description: 'Start creating requests today and let Velto handle the rest.',
     image: images.placeholder,
   },
+];
+
+export const tabs = [
+  { key: 'all' as InvoiceStatus, label: 'Alle', count: 4 },
+  { key: 'draft' as InvoiceStatus, label: 'Concepten', count: 1 },
+  { key: 'sent' as InvoiceStatus, label: 'Verzonden', count: 1 },
+  { key: 'paid' as InvoiceStatus, label: 'Betaald', count: 1 },
+  { key: 'overdue' as InvoiceStatus, label: 'Achterstallig', count: 1 },
 ];
 
 // MOCK DATA

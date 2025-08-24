@@ -77,8 +77,8 @@ export default function Dashboard() {
         </View>
 
         {/* Status Overview */}
-        <View className="px-6 py-2">
-          <View className="bg-white rounded-2xl p-6 shadow-sm">
+        <View className="px-6 py-4 shadow-sm">
+          <View className="bg-white rounded-2xl p-6 ">
             <Text className="text-lg font-JakartaSemiBold text-gray-800 mb-4">
               Status overzicht
             </Text>
@@ -112,19 +112,19 @@ export default function Dashboard() {
         </View>
 
         {/* Recent Invoices */}
-        <View className="px-6 py-4">
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-JakartaSemiBold text-gray-800">
-              Recente Facturen
-            </Text>
-            <TouchableOpacity>
-              <Text className="text-primary-500 font-JakartaMedium">
-                Bekijk alle
-              </Text>
-            </TouchableOpacity>
-          </View>
-
+        <View className="px-6 py-4 shadow-sm">
           <View className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <View className="px-4 pt-6 pb-4 flex-row items-center justify-between ">
+              <Text className="text-lg font-JakartaSemiBold text-gray-800">
+                Recente Facturen
+              </Text>
+              <TouchableOpacity>
+                <Text className="text-primary-500 font-JakartaMedium">
+                  Bekijk alle
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             {mockInvoices.map((invoice, index) => (
               <TouchableOpacity
                 key={invoice.id}
