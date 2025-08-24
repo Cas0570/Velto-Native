@@ -13,6 +13,7 @@ import { tabs } from '@/constants';
 
 import type { InvoiceStatus } from '@/types/type';
 import InvoiceCard from '@/components/InvoiceCard';
+import PageHeader from '@/components/PageHeader';
 
 export default function Invoices() {
   const [activeTab, setActiveTab] = useState<InvoiceStatus>('all');
@@ -57,22 +58,9 @@ export default function Invoices() {
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       {/* Header */}
-      <View className="px-6 py-4">
-        <View className="flex-row items-center mb-2">
-          <View className="w-10 h-10 bg-primary-500 rounded-lg items-center justify-center mr-3">
-            <Text className="text-white font-JakartaBold text-lg">V</Text>
-          </View>
-          <View>
-            <Text className="text-2xl font-JakartaBold text-gray-800">
-              Facturen
-            </Text>
-            <Text className="text-gray-500 font-Jakarta">
-              Overzicht van al je facturen
-            </Text>
-          </View>
-        </View>
-      </View>
+      <PageHeader title="Facturen" subtitle="Overzicht van al je facturen" />
 
+      {/* Search and Tabs */}
       <View className=" px-6 py-4 shadow-sm">
         <View className="bg-white rounded-2xl shadow-md overflow-hidden p-4">
           {/* Search Bar */}

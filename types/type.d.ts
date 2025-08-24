@@ -35,6 +35,18 @@ declare interface InvoiceCardProps {
   className?: string;
 }
 
+declare interface PageHeaderProps {
+  title: string;
+  subtitle?: string;
+  showLogo?: boolean;
+  logoText?: string;
+  rightElement?: React.ReactNode;
+  onLogoPress?: () => void;
+  className?: string;
+  titleClassName?: string;
+  subtitleClassName?: string;
+}
+
 export type InvoiceStatus = 'all' | 'draft' | 'sent' | 'paid' | 'overdue';
 
 // Possible types?????

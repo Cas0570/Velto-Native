@@ -2,8 +2,9 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { mockInvoices } from '@/constants';
-import { getStatusColor, getStatusText, formatCurrency } from '@/utils';
+import { formatCurrency } from '@/utils';
 import InvoiceCard from '@/components/InvoiceCard';
+import PageHeader from '@/components/PageHeader';
 
 export default function Dashboard() {
   const totalOutstanding = 2950;
@@ -20,21 +21,7 @@ export default function Dashboard() {
     <SafeAreaView className="flex-1 bg-gray-50">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View className="px-6 py-4">
-          <View className="flex-row items-center mb-2">
-            <View className="w-10 h-10 bg-primary-500 rounded-lg items-center justify-center mr-3">
-              <Text className="text-white font-JakartaBold text-lg">V</Text>
-            </View>
-            <View>
-              <Text className="text-2xl font-JakartaBold text-gray-800">
-                Welkom terug!
-              </Text>
-              <Text className="text-gray-500 font-Jakarta">
-                Hier is je overzicht
-              </Text>
-            </View>
-          </View>
-        </View>
+        <PageHeader title="Welkom terug!" subtitle="Hier is je overzicht" />
 
         {/* Main Stats Cards */}
         <View className="px-6 py-4">
