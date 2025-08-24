@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { mockInvoices } from '@/constants';
 import { getStatusColor, getStatusText, formatCurrency } from '@/utils';
+import InvoiceCard from '@/components/InvoiceCard';
 
 export default function Dashboard() {
   const totalOutstanding = 2950;
@@ -125,43 +126,12 @@ export default function Dashboard() {
               </TouchableOpacity>
             </View>
 
-            {mockInvoices.map((invoice, index) => (
-              <TouchableOpacity
+            {mockInvoices.map((invoice) => (
+              <InvoiceCard
                 key={invoice.id}
-                className={`p-4 flex-row items-center justify-between ${
-                  index !== mockInvoices.length - 1
-                    ? 'border-b border-gray-100'
-                    : ''
-                }`}
-              >
-                <View className="flex-row items-center flex-1">
-                  <View className="w-10 h-10 bg-gray-100 rounded-lg items-center justify-center mr-3">
-                    <MaterialIcons name="receipt" size={20} color="#6b7280" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="font-JakartaSemiBold text-gray-900">
-                      {invoice.clientName}
-                    </Text>
-                    <Text className="text-sm text-gray-500 font-Jakarta">
-                      {invoice.invoiceNumber} • {invoice.date}
-                    </Text>
-                  </View>
-                </View>
-                <View className="items-end">
-                  <Text className="font-JakartaBold text-gray-900 mb-1">
-                    {formatCurrency(invoice.amount)}
-                  </Text>
-                  <View
-                    className={`px-2 py-1 rounded-full ${getStatusColor(
-                      invoice.status
-                    )}`}
-                  >
-                    <Text className="text-xs font-JakartaMedium">
-                      {getStatusText(invoice.status)}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
+                invoice={invoice}
+                showBorder={true}
+              />
             ))}
           </View>
         </View>

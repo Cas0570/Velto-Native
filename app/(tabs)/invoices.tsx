@@ -9,10 +9,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { mockInvoices } from '@/constants';
-import { getStatusColor, getStatusText, formatCurrency } from '@/utils';
 import { tabs } from '@/constants';
 
 import type { InvoiceStatus } from '@/types/type';
+import InvoiceCard from '@/components/InvoiceCard';
 
 export default function Invoices() {
   const [activeTab, setActiveTab] = useState<InvoiceStatus>('all');
@@ -73,7 +73,7 @@ export default function Invoices() {
         </View>
       </View>
 
-      <View className=" px-6 py-4">
+      <View className=" px-6 py-4 shadow-sm">
         <View className="bg-white rounded-2xl shadow-md overflow-hidden p-4">
           {/* Search Bar */}
           <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 py-3 mb-4">
@@ -139,48 +139,17 @@ export default function Invoices() {
 
       {/* Invoice List */}
       <ScrollView
-        className="flex-1 px-6 py-4"
+        className="flex-1 px-6 py-4 shadow-sm"
         showsVerticalScrollIndicator={false}
       >
         {filteredInvoices.length > 0 ? (
           <View className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            {filteredInvoices.map((invoice, index) => (
-              <TouchableOpacity
+            {filteredInvoices.map((invoice) => (
+              <InvoiceCard
                 key={invoice.id}
-                className={`p-4 flex-row items-center justify-between ${
-                  index !== filteredInvoices.length - 1
-                    ? 'border-b border-gray-100'
-                    : ''
-                }`}
-              >
-                <View className="flex-row items-center flex-1">
-                  <View className="w-12 h-12 bg-gray-100 rounded-xl items-center justify-center mr-4">
-                    <MaterialIcons name="receipt" size={24} color="#6b7280" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="font-JakartaSemiBold text-gray-900 text-base">
-                      {invoice.clientName}
-                    </Text>
-                    <Text className="text-sm text-gray-500 font-Jakarta mt-0.5">
-                      {invoice.invoiceNumber} • {invoice.date}
-                    </Text>
-                  </View>
-                </View>
-                <View className="items-end">
-                  <Text className="font-JakartaBold text-gray-900 text-lg mb-1">
-                    {formatCurrency(invoice.amount)}
-                  </Text>
-                  <View
-                    className={`px-3 py-1 rounded-full ${getStatusColor(
-                      invoice.status
-                    )}`}
-                  >
-                    <Text className="text-xs font-JakartaMedium">
-                      {getStatusText(invoice.status)}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
+                invoice={invoice}
+                showBorder={true}
+              />
             ))}
           </View>
         ) : (

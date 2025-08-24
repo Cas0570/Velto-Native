@@ -20,6 +20,21 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
 }
 
+declare interface InvoiceCardProps {
+  invoice: {
+    id: string;
+    clientName: string;
+    invoiceNumber: string;
+    date: string;
+    amount: number;
+    status: 'draft' | 'sent' | 'paid' | 'overdue';
+  };
+  onPress?: () => void;
+  showBorder?: boolean;
+  size?: 'small' | 'large';
+  className?: string;
+}
+
 export type InvoiceStatus = 'all' | 'draft' | 'sent' | 'paid' | 'overdue';
 
 // Possible types?????
