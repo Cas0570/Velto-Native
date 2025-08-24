@@ -49,6 +49,36 @@ declare interface PageHeaderProps {
 
 export type InvoiceStatus = 'all' | 'draft' | 'sent' | 'paid' | 'overdue';
 
+export interface InvoiceStep {
+  id: number;
+  title: string;
+  description: string;
+}
+
+export interface ClientInfoFormData {
+  clientName: string;
+  clientEmail: string;
+  clientAddress?: string;
+  clientCity?: string;
+  clientPostalCode?: string;
+}
+
+export interface InvoiceLineFormData {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  vatRate: number;
+}
+
+export interface InvoiceFormData {
+  client: ClientInfoFormData;
+  lines: InvoiceLineFormData[];
+  notes?: string;
+  logoUrl?: string;
+  primaryColor?: string;
+  paymentLink?: string;
+}
+
 // Possible types?????
 export interface Invoice {
   id: string;
