@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { mockInvoices } from '@/constants';
 import { formatCurrency } from '@/utils';
 import InvoiceCard from '@/components/InvoiceCard';
@@ -106,7 +107,7 @@ export default function Dashboard() {
               <Text className="text-lg font-JakartaSemiBold text-gray-800">
                 Recente Facturen
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/(tabs)/invoices')}>
                 <Text className="text-primary-500 font-JakartaMedium">
                   Bekijk alle
                 </Text>
