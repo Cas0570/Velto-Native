@@ -165,3 +165,12 @@ export const mockInvoices = [
     status: 'draft' as const,
   },
 ];
+
+export const companyData = {
+  name: 'Jouw Bedrijf BV',
+  email: 'info@jouwbedrijf.nl',
+  address: 'Businesslaan 123, 1234 AB Amsterdam',
+  iban: 'NL12 BANK 0123 4567 89',
+  kvk: '12345678',
+  btw: 'NL123456789B01',
+};

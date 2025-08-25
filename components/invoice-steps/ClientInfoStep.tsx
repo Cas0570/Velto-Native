@@ -10,11 +10,12 @@ import type { NewInvoiceStepProps } from '@/types/type';
 const clientInfoSchema = z.object({
   name: z.string().min(2, 'Bedrijfsnaam is verplicht'),
   email: z.string().email('Voer een geldig e-mailadres in'),
-  straat: z.string().min(3, 'Straatnaam is verplicht'),
   postcode: z
     .string()
     .regex(/^[1-9][0-9]{3}\s?[a-zA-Z]{2}$/, 'Voer een geldige postcode in'),
   huisnummer: z.string().min(1, 'Huisnummer is verplicht'),
+  straat: z.string().min(3, 'Straatnaam is verplicht'),
+  plaats: z.string().min(2, 'Plaatsnaam is verplicht'),
   phone: z.string().optional(),
 });
 
@@ -94,26 +95,6 @@ const ClientInfoStep = ({ data, onUpdate, onNext }: NewInvoiceStepProps) => {
           </Text>
         )}
 
-        <Controller
-          control={control}
-          name="straat"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <InputField
-              label="Straatnaam *"
-              placeholder="Hoofdstraat"
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              containerStyle={errors.straat ? 'border-red-500' : ''}
-            />
-          )}
-        />
-        {errors.straat && (
-          <Text className="text-red-500 text-sm font-Jakarta mb-2">
-            {errors.straat.message}
-          </Text>
-        )}
-
         <View className="flex-row justify-between gap-x-4">
           <View className="basis-3/5">
             <Controller
@@ -158,6 +139,46 @@ const ClientInfoStep = ({ data, onUpdate, onNext }: NewInvoiceStepProps) => {
             )}
           </View>
         </View>
+
+        <Controller
+          control={control}
+          name="straat"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <InputField
+              label="Straatnaam *"
+              placeholder="Hoofdstraat"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              containerStyle={errors.straat ? 'border-red-500' : ''}
+            />
+          )}
+        />
+        {errors.straat && (
+          <Text className="text-red-500 text-sm font-Jakarta mb-2">
+            {errors.straat.message}
+          </Text>
+        )}
+
+        <Controller
+          control={control}
+          name="plaats"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <InputField
+              label="Plaats *"
+              placeholder="Amsterdam"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              containerStyle={errors.plaats ? 'border-red-500' : ''}
+            />
+          )}
+        />
+        {errors.plaats && (
+          <Text className="text-red-500 text-sm font-Jakarta mb-2">
+            {errors.plaats.message}
+          </Text>
+        )}
 
         <Controller
           control={control}

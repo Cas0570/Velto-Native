@@ -7,6 +7,7 @@ import StepIndicator from '@/components/StepIndicator';
 import ClientInfoStep from '@/components/invoice-steps/ClientInfoStep';
 import InvoiceLinesStep from '@/components/invoice-steps/InvoiceLinesStep';
 import ExtraOptionsStep from '@/components/invoice-steps/ExtraOptionsStep';
+import InvoicePreviewStep from '@/components/invoice-steps/InvoicePreviewStep';
 import type { NewInvoiceData } from '@/types/type';
 
 // Initial empty data structure
@@ -14,9 +15,10 @@ const initialInvoiceData: NewInvoiceData = {
   clientInfo: {
     name: '',
     email: '',
-    straat: '',
     postcode: '',
     huisnummer: '',
+    straat: '',
+    plaats: '',
     phone: '',
   },
   invoiceLines: [],
@@ -77,11 +79,7 @@ export default function NewInvoice() {
       case 3:
         return <ExtraOptionsStep {...stepProps} />;
       case 4:
-        return (
-          <View className="p-6">
-            <Text className="text-lg">Preview Step - Coming Soon</Text>
-          </View>
-        );
+        return <InvoicePreviewStep {...stepProps} />;
       case 5:
         return (
           <View className="p-6">
