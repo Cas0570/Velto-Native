@@ -61,6 +61,39 @@ export const tabs = [
   { key: 'overdue' as InvoiceStatus, label: 'Achterstallig', count: 1 },
 ];
 
+export const invoiceSteps = [
+  {
+    id: 1,
+    title: 'Klantgegevens',
+    description: 'Voer de gegevens van je klant in',
+    icon: 'person' as const,
+  },
+  {
+    id: 2,
+    title: 'Factuurregels',
+    description: 'Voeg producten of diensten toe',
+    icon: 'receipt' as const,
+  },
+  {
+    id: 3,
+    title: 'Extra opties',
+    description: 'Logo, kleuren en betalingslink',
+    icon: 'settings' as const,
+  },
+  {
+    id: 4,
+    title: 'Voorvertoning',
+    description: 'Controleer je factuur',
+    icon: 'preview' as const,
+  },
+  {
+    id: 5,
+    title: 'Versturen',
+    description: 'Exporteer of verstuur je factuur',
+    icon: 'send' as const,
+  },
+];
+
 // MOCK DATA
 export const mockInvoices = [
   {

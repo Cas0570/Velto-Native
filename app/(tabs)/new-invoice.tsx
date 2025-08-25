@@ -1,24 +1,112 @@
 import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { invoiceSteps } from '@/constants';
+import PageHeader from '@/components/PageHeader';
+import StepIndicator from '@/components/StepIndicator';
+import ClientInfoStep from '@/components/invoice-steps/ClientInfoStep';
+import type { NewInvoiceData } from '@/types/type';
+
+// Initial empty data structure
+const initialInvoiceData: NewInvoiceData = {
+  clientInfo: {
+    name: '',
+    email: '',
+    address: '',
+    phone: '',
+  },
+  invoiceLines: [],
+  options: {
+    notes: '',
+    paymentMethod: 'bank',
+  },
+  calculated: {
+    subtotal: 0,
+    totalVat: 0,
+    total: 0,
+    invoiceNumber: `#${String(Date.now()).slice(-6)}`, // Simple ID generation
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split('T')[0], // 30 days from now
+  },
+};
 
 export default function NewInvoice() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [invoiceData, setInvoiceData] =
+    useState<NewInvoiceData>(initialInvoiceData);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleUpdateData = (data: Partial<NewInvoiceData>) => {
+    setInvoiceData((prev) => ({
+      ...prev,
+      ...data,
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentStep < invoiceSteps.length) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const renderCurrentStep = () => {
+    const stepProps = {
+      data: invoiceData,
+      onUpdate: handleUpdateData,
+      onNext: handleNext,
+      onPrevious: handlePrevious,
+      isLoading,
+    };
+
+    switch (currentStep) {
+      case 1:
+        return <ClientInfoStep {...stepProps} />;
+      case 2:
+        return (
+          <View className="p-6">
+            <Text className="text-lg">Invoice Lines Step - Coming Soon</Text>
+          </View>
+        );
+      case 3:
+        return (
+          <View className="p-6">
+            <Text className="text-lg">Extra Options Step - Coming Soon</Text>
+          </View>
+        );
+      case 4:
+        return (
+          <View className="p-6">
+            <Text className="text-lg">Preview Step - Coming Soon</Text>
+          </View>
+        );
+      case 5:
+        return (
+          <View className="p-6">
+            <Text className="text-lg">Send Step - Coming Soon</Text>
+          </View>
+        );
+      default:
+        return <ClientInfoStep {...stepProps} />;
+    }
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 p-4">
-        <Text className="text-2xl font-bold text-gray-800 mb-4">
-          New Invoice
-        </Text>
-        <Text className="text-gray-600">Invoice creation steps:</Text>
-        <View className="mt-4 space-y-2">
-          <Text className="text-gray-600">• Step 1: Client info</Text>
-          <Text className="text-gray-600">• Step 2: Invoice lines</Text>
-          <Text className="text-gray-600">
-            • Step 3: Extra options (logo, colors, notes)
-          </Text>
-          <Text className="text-gray-600">• Step 4: Preview</Text>
-          <Text className="text-gray-600">• Step 5: Send/Export</Text>
-        </View>
-      </View>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <PageHeader
+        title="Nieuwe Factuur"
+        subtitle={`Stap ${currentStep} van ${invoiceSteps.length}: ${invoiceSteps[currentStep - 1]?.title}`}
+      />
+
+      <StepIndicator steps={invoiceSteps} currentStep={currentStep} />
+
+      <View className="flex-1">{renderCurrentStep()}</View>
     </SafeAreaView>
   );
 }

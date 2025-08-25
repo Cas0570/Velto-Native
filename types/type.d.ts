@@ -1,5 +1,6 @@
 import { TextInputProps, TouchableOpacityProps } from 'react-native';
 
+// Component Props
 declare interface ButtonProps extends TouchableOpacityProps {
   title: string;
   bgVariant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'success';
@@ -47,7 +48,66 @@ declare interface PageHeaderProps {
   subtitleClassName?: string;
 }
 
+declare interface StepIndicatorStep {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+}
+
+declare interface StepIndicatorProps {
+  steps: StepIndicatorStep[];
+  currentStep: number;
+  className?: string;
+}
+
 export type InvoiceStatus = 'all' | 'draft' | 'sent' | 'paid' | 'overdue';
+
+// New Invoice Creation Types
+export interface NewInvoiceData {
+  // Step 1: Client Info
+  clientInfo: {
+    name: string;
+    email: string;
+    address: string;
+    phone?: string;
+  };
+  // Step 2: Invoice Lines
+  invoiceLines: InvoiceLineItem[];
+  // Step 3: Extra Options
+  options: {
+    logo?: string;
+    primaryColor?: string;
+    notes?: string;
+    paymentLink?: string;
+    paymentMethod?: 'tikkie' | 'paypal' | 'bank';
+  };
+  // Step 4: Preview (calculated fields)
+  calculated: {
+    subtotal: number;
+    totalVat: number;
+    total: number;
+    invoiceNumber: string;
+    dueDate: string;
+  };
+}
+
+export interface InvoiceLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  vatRate: number;
+  total: number;
+}
+
+export interface NewInvoiceStepProps {
+  data: NewInvoiceData;
+  onUpdate: (data: Partial<NewInvoiceData>) => void;
+  onNext: () => void;
+  onPrevious: () => void;
+  isLoading?: boolean;
+}
 
 // Possible types?????
 export interface Invoice {

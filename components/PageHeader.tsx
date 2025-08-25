@@ -15,7 +15,7 @@ const PageHeader = ({
   const LogoComponent = onLogoPress ? TouchableOpacity : View;
 
   return (
-    <View className={`px-6 py-4 ${className}`}>
+    <View className={`px-6 py-4 bg-white ${className}`}>
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center flex-1">
           {showLogo && (
