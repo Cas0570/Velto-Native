@@ -6,6 +6,7 @@ import PageHeader from '@/components/PageHeader';
 import StepIndicator from '@/components/StepIndicator';
 import ClientInfoStep from '@/components/invoice-steps/ClientInfoStep';
 import InvoiceLinesStep from '@/components/invoice-steps/InvoiceLinesStep';
+import ExtraOptionsStep from '@/components/invoice-steps/ExtraOptionsStep';
 import type { NewInvoiceData } from '@/types/type';
 
 // Initial empty data structure
@@ -74,11 +75,7 @@ export default function NewInvoice() {
       case 2:
         return <InvoiceLinesStep {...stepProps} />;
       case 3:
-        return (
-          <View className="p-6">
-            <Text className="text-lg">Extra Options Step - Coming Soon</Text>
-          </View>
-        );
+        return <ExtraOptionsStep {...stepProps} />;
       case 4:
         return (
           <View className="p-6">

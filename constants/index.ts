@@ -100,6 +100,27 @@ export const vatRates = [
   { label: '21%', value: 0.21 },
 ];
 
+export const paymentMethods = [
+  {
+    key: 'tikkie',
+    label: 'Tikkie',
+    description: 'Nederlandse betalingsapp',
+    icon: 'smartphone',
+  },
+  {
+    key: 'paypal',
+    label: 'PayPal',
+    description: 'Internationale betalingen',
+    icon: 'payment',
+  },
+  {
+    key: 'bank',
+    label: 'Bankoverschrijving',
+    description: 'Traditionele overschrijving',
+    icon: 'account-balance',
+  },
+];
+
 // MOCK DATA
 export const mockInvoices = [
   {
