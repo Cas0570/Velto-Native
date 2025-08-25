@@ -6,6 +6,7 @@ import {
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { mockInvoices } from '@/constants';
@@ -160,7 +161,10 @@ export default function Invoices() {
 
       {/* Floating Action Button */}
       <View className="absolute bottom-6 right-6">
-        <TouchableOpacity className="w-14 h-14 bg-primary-500 rounded-full items-center justify-center shadow-lg">
+        <TouchableOpacity
+          onPress={() => router.push('/(tabs)/new-invoice')}
+          className="w-14 h-14 bg-primary-500 rounded-full items-center justify-center shadow-lg"
+        >
           <MaterialIcons name="add" size={28} color="white" />
         </TouchableOpacity>
       </View>

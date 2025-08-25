@@ -121,6 +121,15 @@ export const paymentMethods = [
   },
 ];
 
+export const colorOptions = [
+  { name: 'Velto Groen', color: '#43d478' },
+  { name: 'Blauw', color: '#3b82f6' },
+  { name: 'Paars', color: '#8b5cf6' },
+  { name: 'Roze', color: '#ec4899' },
+  { name: 'Oranje', color: '#f97316' },
+  { name: 'Rood', color: '#ef4444' },
+];
+
 // MOCK DATA
 export const mockInvoices = [
   {

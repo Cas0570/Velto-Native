@@ -7,7 +7,7 @@ import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import InputField from '@/components/InputField';
 import CustomButton from '@/components/CustomButton';
-import { paymentMethods } from '@/constants';
+import { paymentMethods, colorOptions } from '@/constants';
 import type { NewInvoiceStepProps } from '@/types/type';
 
 // Validation schema
@@ -23,16 +23,6 @@ const extraOptionsSchema = z.object({
 });
 
 type ExtraOptionsForm = z.infer<typeof extraOptionsSchema>;
-
-// Predefined color options
-const colorOptions = [
-  { name: 'Velto Groen', color: '#43d478' },
-  { name: 'Blauw', color: '#3b82f6' },
-  { name: 'Paars', color: '#8b5cf6' },
-  { name: 'Roze', color: '#ec4899' },
-  { name: 'Oranje', color: '#f97316' },
-  { name: 'Rood', color: '#ef4444' },
-];
 
 const ExtraOptionsStep = ({
   data,
