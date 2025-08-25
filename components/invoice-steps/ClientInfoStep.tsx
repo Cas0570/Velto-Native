@@ -10,7 +10,11 @@ import type { NewInvoiceStepProps } from '@/types/type';
 const clientInfoSchema = z.object({
   name: z.string().min(2, 'Bedrijfsnaam is verplicht'),
   email: z.string().email('Voer een geldig e-mailadres in'),
-  address: z.string().min(3, 'Adres is verplicht'),
+  straat: z.string().min(3, 'Straatnaam is verplicht'),
+  postcode: z
+    .string()
+    .regex(/^[1-9][0-9]{3}\s?[a-zA-Z]{2}$/, 'Voer een geldige postcode in'),
+  huisnummer: z.string().min(1, 'Huisnummer is verplicht'),
   phone: z.string().optional(),
 });
 
@@ -92,25 +96,68 @@ const ClientInfoStep = ({ data, onUpdate, onNext }: NewInvoiceStepProps) => {
 
         <Controller
           control={control}
-          name="address"
+          name="straat"
           render={({ field: { onChange, onBlur, value } }) => (
             <InputField
-              label="Adres *"
-              placeholder="Hoofdstraat 123, 1234 AB Amsterdam"
+              label="Straatnaam *"
+              placeholder="Hoofdstraat"
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              multiline
-              numberOfLines={2}
-              containerStyle={errors.address ? 'border-red-500' : ''}
+              containerStyle={errors.straat ? 'border-red-500' : ''}
             />
           )}
         />
-        {errors.address && (
+        {errors.straat && (
           <Text className="text-red-500 text-sm font-Jakarta mb-2">
-            {errors.address.message}
+            {errors.straat.message}
           </Text>
         )}
+
+        <View className="flex-row justify-between gap-x-4">
+          <View className="basis-3/5">
+            <Controller
+              control={control}
+              name="postcode"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <InputField
+                  label="Postcode *"
+                  placeholder="8301 AB"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  containerStyle={errors.postcode ? 'border-red-500' : ''}
+                />
+              )}
+            />
+            {errors.postcode && (
+              <Text className="text-red-500 text-sm font-Jakarta mb-2">
+                {errors.postcode.message}
+              </Text>
+            )}
+          </View>
+          <View className="basis-2/5">
+            <Controller
+              control={control}
+              name="huisnummer"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <InputField
+                  label="Huisnummer *"
+                  placeholder="114A"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  containerStyle={errors.huisnummer ? 'border-red-500' : ''}
+                />
+              )}
+            />
+            {errors.huisnummer && (
+              <Text className="text-red-500 text-sm font-Jakarta mb-2">
+                {errors.huisnummer.message}
+              </Text>
+            )}
+          </View>
+        </View>
 
         <Controller
           control={control}
@@ -133,7 +180,7 @@ const ClientInfoStep = ({ data, onUpdate, onNext }: NewInvoiceStepProps) => {
       </View>
 
       {/* Bottom Action */}
-      <View className="px-6 py-4">
+      <View className="py-4">
         <CustomButton
           title="Volgende Stap"
           onPress={handleSubmit(onSubmit)}

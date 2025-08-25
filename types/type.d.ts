@@ -69,7 +69,9 @@ export interface NewInvoiceData {
   clientInfo: {
     name: string;
     email: string;
-    address: string;
+    straat: string;
+    postcode: string;
+    huisnummer: string;
     phone?: string;
   };
   // Step 2: Invoice Lines
