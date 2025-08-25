@@ -8,6 +8,7 @@ import ClientInfoStep from '@/components/invoice-steps/ClientInfoStep';
 import InvoiceLinesStep from '@/components/invoice-steps/InvoiceLinesStep';
 import ExtraOptionsStep from '@/components/invoice-steps/ExtraOptionsStep';
 import InvoicePreviewStep from '@/components/invoice-steps/InvoicePreviewStep';
+import SendExportStep from '@/components/invoice-steps/SendExportStep';
 import type { NewInvoiceData } from '@/types/type';
 
 // Initial empty data structure
@@ -81,11 +82,7 @@ export default function NewInvoice() {
       case 4:
         return <InvoicePreviewStep {...stepProps} />;
       case 5:
-        return (
-          <View className="p-6">
-            <Text className="text-lg">Send Step - Coming Soon</Text>
-          </View>
-        );
+        return <SendExportStep {...stepProps} />;
       default:
         return <ClientInfoStep {...stepProps} />;
     }
