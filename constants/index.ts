@@ -94,6 +94,12 @@ export const invoiceSteps = [
   },
 ];
 
+export const vatRates = [
+  { label: '0%', value: 0 },
+  { label: '9%', value: 0.09 },
+  { label: '21%', value: 0.21 },
+];
+
 // MOCK DATA
 export const mockInvoices = [
   {

@@ -1,10 +1,11 @@
 import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { invoiceSteps } from '@/constants';
 import PageHeader from '@/components/PageHeader';
 import StepIndicator from '@/components/StepIndicator';
 import ClientInfoStep from '@/components/invoice-steps/ClientInfoStep';
+import InvoiceLinesStep from '@/components/invoice-steps/InvoiceLinesStep';
 import type { NewInvoiceData } from '@/types/type';
 
 // Initial empty data structure
@@ -12,7 +13,9 @@ const initialInvoiceData: NewInvoiceData = {
   clientInfo: {
     name: '',
     email: '',
-    address: '',
+    straat: '',
+    postcode: '',
+    huisnummer: '',
     phone: '',
   },
   invoiceLines: [],
@@ -37,24 +40,24 @@ export default function NewInvoice() {
     useState<NewInvoiceData>(initialInvoiceData);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleUpdateData = (data: Partial<NewInvoiceData>) => {
+  const handleUpdateData = useCallback((data: Partial<NewInvoiceData>) => {
     setInvoiceData((prev) => ({
       ...prev,
       ...data,
     }));
-  };
+  }, []);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentStep < invoiceSteps.length) {
       setCurrentStep((prev) => prev + 1);
     }
-  };
+  }, [currentStep]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     }
-  };
+  }, [currentStep]);
 
   const renderCurrentStep = () => {
     const stepProps = {
@@ -69,11 +72,7 @@ export default function NewInvoice() {
       case 1:
         return <ClientInfoStep {...stepProps} />;
       case 2:
-        return (
-          <View className="p-6">
-            <Text className="text-lg">Invoice Lines Step - Coming Soon</Text>
-          </View>
-        );
+        return <InvoiceLinesStep {...stepProps} />;
       case 3:
         return (
           <View className="p-6">
