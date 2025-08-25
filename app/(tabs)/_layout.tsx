@@ -13,10 +13,6 @@ export default function TabLayout() {
           borderTopWidth: 1,
           borderTopColor: Colors.secondary,
         },
-        headerStyle: {
-          backgroundColor: Colors.background,
-        },
-        headerTintColor: Colors.text,
       }}
     >
       <Tabs.Screen
