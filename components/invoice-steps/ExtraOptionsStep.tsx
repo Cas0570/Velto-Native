@@ -331,7 +331,11 @@ const ExtraOptionsStep = ({
         <CustomButton
           title="Volgende Stap"
           onPress={handleSubmit(onSubmit)}
-          className="flex-1"
+          disabled={
+            !isValid ||
+            (watchedPaymentMethod !== 'bank' && !watch('paymentLink'))
+          }
+          className={`flex-1 ${!isValid || (watchedPaymentMethod !== 'bank' && !watch('paymentLink')) ? 'opacity-50' : ''}`}
         />
       </View>
     </ScrollView>
