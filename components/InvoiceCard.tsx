@@ -1,5 +1,6 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { getStatusColor, getStatusText, formatCurrency } from '@/utils';
 import type { InvoiceCardProps } from '@/types/type';
 
@@ -17,10 +18,19 @@ const InvoiceCard = ({
   const amountSize = size === 'large' ? 'text-lg' : 'text-base';
   const badgePadding = size === 'large' ? 'px-3 py-1' : 'px-2 py-1';
 
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else {
+      // Default behavior: navigate to invoice detail
+      router.push(`/invoice/${invoice.id}`);
+    }
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
-      className={`p-4 flex-row items-center justify-between ${
+      onPress={handlePress}
+      className={`p-4 flex-row items-center justify-between active:bg-gray-50 ${
         showBorder ? 'border-b border-gray-100' : ''
       } ${className}`}
     >
@@ -59,6 +69,12 @@ const InvoiceCard = ({
           </Text>
         </View>
       </View>
+      <MaterialIcons
+        name="chevron-right"
+        size={20}
+        color="#9ca3af"
+        style={{ marginLeft: 8 }}
+      />
     </TouchableOpacity>
   );
 };
