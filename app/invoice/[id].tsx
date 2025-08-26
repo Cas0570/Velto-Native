@@ -14,7 +14,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
 
-import { mockInvoices, companyData } from '@/constants';
+import { useInvoiceStore, useUserStore } from '@/stores';
+import { companyData } from '@/constants';
 import {
   formatCurrency,
   formatDate,
@@ -23,59 +24,15 @@ import {
 } from '@/utils';
 import CustomButton from '@/components/CustomButton';
 
-// Mock detailed invoice data - in real app this would come from API
-const getDetailedInvoiceData = (id: string) => {
-  const baseInvoice = mockInvoices.find((inv) => inv.id === id);
-  if (!baseInvoice) return null;
-
-  return {
-    ...baseInvoice,
-    clientInfo: {
-      name: baseInvoice.clientName,
-      email:
-        'contact@' +
-        baseInvoice.clientName.toLowerCase().replace(' ', '') +
-        '.com',
-      address: 'Keizersgracht 123, 1015 CJ Amsterdam',
-      phone: '+31 20 123 4567',
-    },
-    invoiceLines: [
-      {
-        id: '1',
-        description: 'Website Development',
-        quantity: 1,
-        unitPrice: baseInvoice.amount * 0.6,
-        vatRate: 0.21,
-        total: baseInvoice.amount * 0.6 * 1.21,
-      },
-      {
-        id: '2',
-        description: 'SEO Optimization',
-        quantity: 2,
-        unitPrice: baseInvoice.amount * 0.2,
-        vatRate: 0.21,
-        total: baseInvoice.amount * 0.2 * 2 * 1.21,
-      },
-    ],
-    totals: {
-      subtotal: baseInvoice.amount / 1.21,
-      vat: baseInvoice.amount - baseInvoice.amount / 1.21,
-      total: baseInvoice.amount,
-    },
-    paymentMethod: 'bank',
-    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0],
-    notes:
-      'Betaling binnen 30 dagen na factuurdatum. Bij vragen kunt u contact opnemen.',
-  };
-};
-
 export default function InvoiceDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
-  const invoiceData = getDetailedInvoiceData(id);
+  const { getInvoiceById, updateInvoiceStatus, deleteInvoice } =
+    useInvoiceStore();
+  const { companyInfo } = useUserStore();
+
+  const invoiceData = getInvoiceById(id);
 
   if (!invoiceData) {
     return (
@@ -100,10 +57,10 @@ export default function InvoiceDetail() {
 
   const handleStatusUpdate = () => {
     const statusOptions = [
-      { title: 'Concept', value: 'draft' },
-      { title: 'Verzonden', value: 'sent' },
-      { title: 'Betaald', value: 'paid' },
-      { title: 'Te laat', value: 'overdue' },
+      { title: 'Concept', value: 'draft' as const },
+      { title: 'Verzonden', value: 'sent' as const },
+      { title: 'Betaald', value: 'paid' as const },
+      { title: 'Te laat', value: 'overdue' as const },
     ];
 
     Alert.alert(
@@ -114,7 +71,7 @@ export default function InvoiceDetail() {
         ...statusOptions.map((option) => ({
           text: option.title,
           onPress: () => {
-            // TODO: Implement status update
+            updateInvoiceStatus(id, option.value);
             Alert.alert(
               'Status bijgewerkt',
               `Factuur status gewijzigd naar: ${option.title}`
@@ -135,8 +92,7 @@ export default function InvoiceDetail() {
           text: 'Verwijderen',
           style: 'destructive',
           onPress: () => {
-            // TODO: Implement actual deletion logic
-            // This would typically call an API to delete the invoice
+            deleteInvoice(id);
             Alert.alert(
               'Factuur verwijderd',
               'De factuur is succesvol verwijderd.',
@@ -292,7 +248,7 @@ export default function InvoiceDetail() {
       await MailComposer.composeAsync({
         recipients: [invoiceData.clientInfo.email],
         subject: `Factuur ${invoiceData.invoiceNumber} - ${invoiceData.clientInfo.name}`,
-        body: `Beste ${invoiceData.clientInfo.name},\n\nHierbij ontvangt u factuur ${invoiceData.invoiceNumber} ter waarde van ${formatCurrency(invoiceData.totals.total)}.\n\nDe factuur is betaalbaar binnen 30 dagen.\n\nMet vriendelijke groet,\n${companyData.name}`,
+        body: `Beste ${invoiceData.clientInfo.name},\n\nHierbij ontvangt u factuur ${invoiceData.invoiceNumber} ter waarde van ${formatCurrency(invoiceData.totals.total)}.\n\nDe factuur is betaalbaar binnen 30 dagen.\n\nMet vriendelijke groet,\n${companyInfo.name}`,
       });
     } catch (error) {
       Alert.alert(
@@ -374,16 +330,16 @@ export default function InvoiceDetail() {
                 Van:
               </Text>
               <Text className="font-JakartaSemiBold text-gray-900">
-                {companyData.name}
+                {companyInfo.name}
               </Text>
               <Text className="text-gray-600 font-Jakarta text-sm">
-                {companyData.email}
+                {companyInfo.email}
               </Text>
               <Text className="text-gray-600 font-Jakarta text-sm">
-                {companyData.address}
+                {companyInfo.address}
               </Text>
               <Text className="text-gray-600 font-Jakarta text-sm">
-                KVK: {companyData.kvk} | BTW: {companyData.btw}
+                KVK: {companyInfo.kvk} | BTW: {companyInfo.btw}
               </Text>
             </View>
           </View>

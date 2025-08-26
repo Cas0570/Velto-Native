@@ -2,28 +2,65 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { mockInvoices } from '@/constants';
+import { useEffect } from 'react';
+import { useInvoiceStore, useUserStore } from '@/stores';
 import { formatCurrency } from '@/utils';
 import InvoiceCard from '@/components/InvoiceCard';
 import PageHeader from '@/components/PageHeader';
 
 export default function Dashboard() {
-  const totalOutstanding = 2950;
-  const thisMonth = 4200;
-  const monthlyGrowth = 12;
-  const invoiceCount = mockInvoices.length;
-  const paidCount = mockInvoices.filter((inv) => inv.status === 'paid').length;
-  const sentCount = mockInvoices.filter((inv) => inv.status === 'sent').length;
-  const overdueCount = mockInvoices.filter(
-    (inv) => inv.status === 'overdue'
-  ).length;
+  const {
+    invoices,
+    totalOutstanding,
+    thisMonthTotal,
+    paidCount,
+    sentCount,
+    overdueCount,
+    fetchInvoices,
+    isLoading,
+  } = useInvoiceStore();
+
+  const { subscription, user } = useUserStore();
+
+  // Calculate monthly growth (mock calculation)
+  const monthlyGrowth = 12; // In real app, this would be calculated from historical data
+
+  // Fetch invoices on component mount
+  useEffect(() => {
+    if (invoices.length === 0) {
+      fetchInvoices();
+    }
+  }, [fetchInvoices, invoices.length]);
+
+  // Get recent invoices (last 4)
+  const recentInvoices = invoices
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .slice(0, 4);
+
+  if (isLoading && invoices.length === 0) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50">
+        <View className="flex-1 items-center justify-center">
+          <MaterialIcons name="hourglass-empty" size={48} color="#9ca3af" />
+          <Text className="text-gray-500 font-Jakarta mt-4">
+            Facturen laden...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
+      {/* Header */}
+      <PageHeader
+        title={`Welkom terug${user?.name ? `, ${user.name.split(' ')[0]}` : ''}!`}
+        subtitle="Hier is je overzicht"
+      />
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <PageHeader title="Welkom terug!" subtitle="Hier is je overzicht" />
-
         {/* Main Stats Cards */}
         <View className="px-6 py-4">
           <View className="flex-row gap-x-4">
@@ -41,7 +78,7 @@ export default function Dashboard() {
                 {formatCurrency(totalOutstanding)}
               </Text>
               <Text className="text-sm text-gray-500 font-Jakarta">
-                {invoiceCount} facturen
+                {sentCount + overdueCount} facturen
               </Text>
             </View>
 
@@ -56,7 +93,7 @@ export default function Dashboard() {
                 </View>
               </View>
               <Text className="text-2xl font-JakartaBold text-gray-900 mb-1">
-                {formatCurrency(thisMonth)}
+                {formatCurrency(thisMonthTotal)}
               </Text>
               <Text className="text-sm text-green-600 font-Jakarta">
                 +{monthlyGrowth}% vs vorige maand
@@ -67,7 +104,7 @@ export default function Dashboard() {
 
         {/* Status Overview */}
         <View className="px-6 py-4 shadow-sm">
-          <View className="bg-white rounded-2xl p-6 ">
+          <View className="bg-white rounded-2xl p-6">
             <Text className="text-lg font-JakartaSemiBold text-gray-800 mb-4">
               Status overzicht
             </Text>
@@ -103,7 +140,7 @@ export default function Dashboard() {
         {/* Recent Invoices */}
         <View className="px-6 py-4 shadow-sm">
           <View className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            <View className="px-4 pt-6 pb-4 flex-row items-center justify-between ">
+            <View className="px-4 pt-6 pb-4 flex-row items-center justify-between">
               <Text className="text-lg font-JakartaSemiBold text-gray-800">
                 Recente Facturen
               </Text>
@@ -114,13 +151,29 @@ export default function Dashboard() {
               </TouchableOpacity>
             </View>
 
-            {mockInvoices.map((invoice) => (
-              <InvoiceCard
-                key={invoice.id}
-                invoice={invoice}
-                showBorder={true}
-              />
-            ))}
+            {recentInvoices.length > 0 ? (
+              recentInvoices.map((invoice) => (
+                <InvoiceCard
+                  key={invoice.id}
+                  invoice={{
+                    id: invoice.id,
+                    clientName: invoice.clientName,
+                    invoiceNumber: invoice.invoiceNumber,
+                    date: invoice.date,
+                    amount: invoice.amount,
+                    status: invoice.status,
+                  }}
+                  showBorder={true}
+                />
+              ))
+            ) : (
+              <View className="p-8 items-center">
+                <MaterialIcons name="receipt-long" size={48} color="#9ca3af" />
+                <Text className="text-gray-500 font-Jakarta mt-2">
+                  Nog geen facturen
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -132,12 +185,24 @@ export default function Dashboard() {
             </View>
             <View className="flex-1">
               <Text className="font-JakartaSemiBold text-amber-800">
-                Gratis plan
+                {subscription.plan === 'free' ? 'Gratis plan' : 'Premium plan'}
               </Text>
               <Text className="text-sm text-amber-700 font-Jakarta">
-                3 van 5 facturen gebruikt deze maand
+                {subscription.plan === 'free'
+                  ? `${subscription.invoicesUsed} van ${subscription.invoiceLimit} facturen gebruikt`
+                  : 'Onbeperkte facturen'}
               </Text>
             </View>
+            {subscription.plan === 'free' && (
+              <TouchableOpacity
+                onPress={() => router.push('/(tabs)/settings')}
+                className="ml-2"
+              >
+                <Text className="text-amber-600 font-JakartaMedium text-sm">
+                  Upgrade
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </ScrollView>

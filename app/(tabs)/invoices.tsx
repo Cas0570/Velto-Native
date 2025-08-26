@@ -8,10 +8,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { mockInvoices } from '@/constants';
+import { useState, useMemo } from 'react';
+import { useInvoiceStore, useUserStore } from '@/stores';
 import { tabs } from '@/constants';
-
 import type { InvoiceStatus } from '@/types/type';
 import InvoiceCard from '@/components/InvoiceCard';
 import PageHeader from '@/components/PageHeader';
@@ -20,40 +19,41 @@ export default function Invoices() {
   const [activeTab, setActiveTab] = useState<InvoiceStatus>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const { invoices } = useInvoiceStore();
+  const { canCreateInvoice, subscription } = useUserStore();
+
   // Filter invoices based on active tab and search query
-  const filteredInvoices = mockInvoices.filter((invoice) => {
-    // Filter by status
-    let statusMatch = true;
-    if (activeTab !== 'all') {
-      const statusMap: Record<string, InvoiceStatus> = {
-        draft: 'draft',
-        sent: 'sent',
-        paid: 'paid',
-        overdue: 'overdue',
-      };
-      statusMatch = statusMap[invoice.status] === activeTab;
-    }
+  const filteredInvoices = useMemo(() => {
+    return invoices.filter((invoice) => {
+      // Filter by status
+      let statusMatch = true;
+      if (activeTab !== 'all') {
+        statusMatch = invoice.status === activeTab;
+      }
 
-    // Filter by search query
-    const searchMatch =
-      searchQuery === '' ||
-      invoice.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      invoice.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase());
+      // Filter by search query
+      const searchMatch =
+        searchQuery === '' ||
+        invoice.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        invoice.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return statusMatch && searchMatch;
-  });
+      return statusMatch && searchMatch;
+    });
+  }, [invoices, activeTab, searchQuery]);
 
   const getTabCount = (tabKey: InvoiceStatus) => {
-    if (tabKey === 'all') return mockInvoices.length;
-    const statusMap: Record<InvoiceStatus, string> = {
-      all: '',
-      draft: 'draft',
-      sent: 'sent',
-      paid: 'paid',
-      overdue: 'overdue',
-    };
-    return mockInvoices.filter((inv) => inv.status === statusMap[tabKey])
-      .length;
+    if (tabKey === 'all') return invoices.length;
+    return invoices.filter((inv) => inv.status === tabKey).length;
+  };
+
+  const handleCreateInvoice = () => {
+    if (!canCreateInvoice()) {
+      // Show upgrade modal or redirect to settings
+      router.push('/(tabs)/settings');
+      return;
+    }
+
+    router.push('/(tabs)/new-invoice');
   };
 
   return (
@@ -62,7 +62,7 @@ export default function Invoices() {
       <PageHeader title="Facturen" subtitle="Overzicht van al je facturen" />
 
       {/* Search and Tabs */}
-      <View className=" px-6 py-4 shadow-sm">
+      <View className="px-6 py-4 shadow-sm">
         <View className="bg-white rounded-2xl shadow-md overflow-hidden p-4">
           {/* Search Bar */}
           <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 py-3 mb-4">
@@ -136,7 +136,14 @@ export default function Invoices() {
             {filteredInvoices.map((invoice) => (
               <InvoiceCard
                 key={invoice.id}
-                invoice={invoice}
+                invoice={{
+                  id: invoice.id,
+                  clientName: invoice.clientName,
+                  invoiceNumber: invoice.invoiceNumber,
+                  date: invoice.date,
+                  amount: invoice.amount,
+                  status: invoice.status,
+                }}
                 showBorder={true}
               />
             ))}
@@ -155,6 +162,16 @@ export default function Invoices() {
                 ? `Geen resultaten voor "${searchQuery}"`
                 : `Je hebt nog geen ${tabs.find((t) => t.key === activeTab)?.label.toLowerCase()} facturen.`}
             </Text>
+            {activeTab === 'all' && invoices.length === 0 && (
+              <TouchableOpacity
+                onPress={handleCreateInvoice}
+                className="mt-4 px-6 py-3 bg-primary-500 rounded-full"
+              >
+                <Text className="text-white font-JakartaMedium">
+                  Maak je eerste factuur
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </ScrollView>
@@ -162,12 +179,36 @@ export default function Invoices() {
       {/* Floating Action Button */}
       <View className="absolute bottom-6 right-6">
         <TouchableOpacity
-          onPress={() => router.push('/(tabs)/new-invoice')}
-          className="w-14 h-14 bg-primary-500 rounded-full items-center justify-center shadow-lg"
+          onPress={handleCreateInvoice}
+          className={`w-14 h-14 rounded-full items-center justify-center shadow-lg ${
+            canCreateInvoice() ? 'bg-primary-500' : 'bg-gray-400'
+          }`}
+          disabled={!canCreateInvoice()}
         >
           <MaterialIcons name="add" size={28} color="white" />
         </TouchableOpacity>
       </View>
+
+      {/* Usage Limit Warning */}
+      {subscription.plan === 'free' &&
+        subscription.invoicesUsed >= subscription.invoiceLimit && (
+          <View className="absolute bottom-20 left-6 right-6">
+            <View className="bg-amber-500 rounded-2xl p-4 flex-row items-center shadow-lg">
+              <MaterialIcons name="warning" size={24} color="white" />
+              <Text className="flex-1 text-white font-JakartaMedium ml-3">
+                Je hebt je maandelijkse limiet bereikt
+              </Text>
+              <TouchableOpacity
+                onPress={() => router.push('/(tabs)/settings')}
+                className="bg-white bg-opacity-20 px-3 py-1 rounded-full ml-2"
+              >
+                <Text className="text-white font-JakartaMedium text-sm">
+                  Upgrade
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
     </SafeAreaView>
   );
 }

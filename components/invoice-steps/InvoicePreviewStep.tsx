@@ -191,7 +191,7 @@ const InvoicePreviewStep = ({
 
         {/* Totals */}
         <View className="p-6 border-b border-gray-100">
-          <View className="space-y-2">
+          <View className="gap-y-2">
             <View className="flex-row justify-between">
               <Text className="text-gray-600 font-Jakarta">Subtotaal:</Text>
               <Text className="text-gray-900 font-JakartaMedium">

@@ -12,7 +12,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import PageHeader from '@/components/PageHeader';
-import { companyData } from '@/constants';
+import { useUserStore, useInvoiceStore } from '@/stores';
 import { formatCurrency } from '@/utils';
 
 const SettingsItem = ({
@@ -81,9 +81,35 @@ const SettingsSection = ({
 );
 
 export default function Settings() {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  // const [darkMode, setDarkMode] = useState(false); // For V2
+  const {
+    companyInfo,
+    settings,
+    subscription,
+    signOut,
+    updateSettings,
+    upgradeSubscription,
+    isLoading,
+  } = useUserStore();
+
+  const { thisMonthTotal } = useInvoiceStore();
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(
+    settings.notificationsEnabled
+  );
+  const [emailNotifications, setEmailNotifications] = useState(
+    settings.emailNotifications
+  );
+  // const [darkMode, setDarkMode] = useState(settings.darkMode); // For V2
+
+  const handleNotificationToggle = (value: boolean) => {
+    setNotificationsEnabled(value);
+    updateSettings({ notificationsEnabled: value });
+  };
+
+  const handleEmailToggle = (value: boolean) => {
+    setEmailNotifications(value);
+    updateSettings({ emailNotifications: value });
+  };
 
   const handleCompanyInfoPress = () => {
     // TODO: Navigate to company info edit screen
@@ -95,12 +121,34 @@ export default function Settings() {
   };
 
   const handleSubscriptionPress = () => {
+    if (subscription.plan === 'premium') {
+      Alert.alert(
+        'Premium Actief',
+        'Je hebt al een Premium abonnement met onbeperkte facturen!',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
     Alert.alert(
       'Abonnement Upgraden',
       'Upgrade naar Premium voor onbeperkte facturen en geavanceerde functies!',
       [
         { text: 'Later', style: 'cancel' },
-        { text: 'Upgrade Nu', style: 'default' },
+        {
+          text: 'Upgrade Nu',
+          style: 'default',
+          onPress: async () => {
+            const success = await upgradeSubscription();
+            if (success) {
+              Alert.alert(
+                'Upgrade Succesvol!',
+                'Je hebt nu toegang tot onbeperkte facturen en Premium functies.',
+                [{ text: 'Geweldig!' }]
+              );
+            }
+          },
+        },
       ]
     );
   };
@@ -125,19 +173,18 @@ export default function Settings() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <PageHeader
-          title="Instellingen"
-          subtitle="Beheer je account en voorkeuren"
-          className="mb-4"
-        />
+      <PageHeader
+        title="Instellingen"
+        subtitle="Beheer je account en voorkeuren"
+      />
 
+      <ScrollView className="flex-1 mt-4" showsVerticalScrollIndicator={false}>
         {/* Account Section */}
         <SettingsSection title="Account">
           <SettingsItem
             icon="business"
             title="Bedrijfsgegevens"
-            subtitle={companyData.name}
+            subtitle={companyInfo.name}
             onPress={handleCompanyInfoPress}
             iconColor="#43d478"
             iconBgColor="#e9faf0"
@@ -146,16 +193,28 @@ export default function Settings() {
           <SettingsItem
             icon="card-membership"
             title="Abonnement"
-            subtitle="Gratis Plan • 3 van 5 facturen gebruikt"
+            subtitle={`${subscription.plan === 'free' ? 'Gratis Plan' : 'Premium Plan'} • ${
+              subscription.plan === 'free'
+                ? `${subscription.invoicesUsed} van ${subscription.invoiceLimit} facturen gebruikt`
+                : 'Onbeperkte facturen'
+            }`}
             onPress={handleSubscriptionPress}
             iconColor="#f59e0b"
             iconBgColor="#fef3c7"
             rightElement={
-              <View className="bg-amber-100 px-2 py-1 rounded-full">
-                <Text className="text-amber-700 font-JakartaSemiBold text-xs">
-                  Upgrade
-                </Text>
-              </View>
+              subscription.plan === 'free' ? (
+                <View className="bg-amber-100 px-2 py-1 rounded-full">
+                  <Text className="text-amber-700 font-JakartaSemiBold text-xs">
+                    Upgrade
+                  </Text>
+                </View>
+              ) : (
+                <View className="bg-green-100 px-2 py-1 rounded-full">
+                  <Text className="text-green-700 font-JakartaSemiBold text-xs">
+                    Premium
+                  </Text>
+                </View>
+              )
             }
           />
         </SettingsSection>
@@ -172,7 +231,7 @@ export default function Settings() {
             rightElement={
               <Switch
                 value={notificationsEnabled}
-                onValueChange={setNotificationsEnabled}
+                onValueChange={handleNotificationToggle}
                 trackColor={{ false: '#e5e7eb', true: '#43d478' }}
                 thumbColor={notificationsEnabled ? '#ffffff' : '#f3f4f6'}
               />
@@ -189,7 +248,7 @@ export default function Settings() {
             rightElement={
               <Switch
                 value={emailNotifications}
-                onValueChange={setEmailNotifications}
+                onValueChange={handleEmailToggle}
                 trackColor={{ false: '#e5e7eb', true: '#43d478' }}
                 thumbColor={emailNotifications ? '#ffffff' : '#f3f4f6'}
               />
@@ -269,7 +328,7 @@ export default function Settings() {
             <View className="flex-row justify-between items-center mb-6">
               <View className="flex-1 items-center">
                 <Text className="text-3xl font-JakartaBold text-primary-500">
-                  3
+                  {subscription.invoicesUsed}
                 </Text>
                 <Text className="text-gray-600 font-Jakarta text-sm text-center">
                   Facturen
@@ -277,7 +336,7 @@ export default function Settings() {
               </View>
               <View className="flex-1 items-center">
                 <Text className="text-3xl font-JakartaBold text-blue-600">
-                  {formatCurrency(4200)}
+                  {formatCurrency(thisMonthTotal)}
                 </Text>
                 <Text className="text-gray-600 font-Jakarta text-sm text-center">
                   Totale waarde
@@ -286,15 +345,28 @@ export default function Settings() {
             </View>
 
             {/* Progress Bar */}
-            <View className="bg-gray-100 rounded-full h-2 mb-2">
-              <View
-                className="bg-primary-500 h-2 rounded-full"
-                style={{ width: '60%' }}
-              />
-            </View>
-            <Text className="text-center text-gray-600 font-Jakarta text-sm">
-              3 van 5 gratis facturen gebruikt
-            </Text>
+            {subscription.plan === 'free' && (
+              <>
+                <View className="bg-gray-100 rounded-full h-2 mb-2">
+                  <View
+                    className="bg-primary-500 h-2 rounded-full"
+                    style={{
+                      width: `${Math.min((subscription.invoicesUsed / subscription.invoiceLimit) * 100, 100)}%`,
+                    }}
+                  />
+                </View>
+                <Text className="text-center text-gray-600 font-Jakarta text-sm">
+                  {subscription.invoicesUsed} van {subscription.invoiceLimit}{' '}
+                  gratis facturen gebruikt
+                </Text>
+              </>
+            )}
+
+            {subscription.plan === 'premium' && (
+              <Text className="text-center text-green-600 font-Jakarta text-sm">
+                🎉 Premium - Onbeperkte facturen
+              </Text>
+            )}
           </View>
         </SettingsSection>
 
