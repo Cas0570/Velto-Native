@@ -125,6 +125,34 @@ export default function InvoiceDetail() {
     );
   };
 
+  const handleDeleteInvoice = () => {
+    Alert.alert(
+      'Factuur verwijderen',
+      `Weet je zeker dat je factuur ${invoiceData.invoiceNumber} wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.`,
+      [
+        { text: 'Annuleren', style: 'cancel' },
+        {
+          text: 'Verwijderen',
+          style: 'destructive',
+          onPress: () => {
+            // TODO: Implement actual deletion logic
+            // This would typically call an API to delete the invoice
+            Alert.alert(
+              'Factuur verwijderd',
+              'De factuur is succesvol verwijderd.',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => router.back(),
+                },
+              ]
+            );
+          },
+        },
+      ]
+    );
+  };
+
   const generatePDF = async () => {
     try {
       setIsGeneratingPDF(true);
@@ -279,7 +307,7 @@ export default function InvoiceDetail() {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="px-6 py-4 flex-row items-center justify-between">
+      <View className="bg-white px-6 py-4 flex-row items-center justify-between shadow-sm">
         <View className="flex-row items-center flex-1">
           <TouchableOpacity
             onPress={() => router.back()}
@@ -506,7 +534,7 @@ export default function InvoiceDetail() {
           </View>
 
           {/* Secondary Actions */}
-          <View className="bg-white rounded-2xl p-4 shadow-sm">
+          <View className="bg-white rounded-2xl p-4 shadow-sm gap-y-2">
             <TouchableOpacity
               onPress={handleStatusUpdate}
               className="flex-row items-center justify-between p-3"
@@ -515,6 +543,25 @@ export default function InvoiceDetail() {
                 <MaterialIcons name="edit" size={20} color="#6b7280" />
                 <Text className="ml-3 font-JakartaMedium text-gray-900">
                   Status wijzigen
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={20} color="#9ca3af" />
+            </TouchableOpacity>
+
+            <View className="h-px bg-gray-100 ml-11" />
+
+            <TouchableOpacity
+              onPress={handleDeleteInvoice}
+              className="flex-row items-center justify-between p-3"
+            >
+              <View className="flex-row items-center">
+                <MaterialIcons
+                  name="delete-outline"
+                  size={20}
+                  color="#ef4444"
+                />
+                <Text className="ml-3 font-JakartaMedium text-red-600">
+                  Factuur verwijderen
                 </Text>
               </View>
               <MaterialIcons name="chevron-right" size={20} color="#9ca3af" />
