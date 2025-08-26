@@ -165,6 +165,7 @@ export default function Settings() {
         style: 'destructive',
         onPress: () => {
           // TODO: Implement actual sign out logic
+          signOut();
           router.replace('/(auth)/welcome');
         },
       },

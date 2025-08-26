@@ -103,14 +103,30 @@ export const useUserStore = create<UserState>()(
           // Simulate API call
           await new Promise((resolve) => setTimeout(resolve, 1500));
 
-          // Mock authentication - in real app this would validate credentials
+          // Mock authentication - accept demo credentials or any valid format
           if (email && password) {
-            const mockUser: User = {
-              id: '1',
-              name: 'John Doe',
-              email: email,
-              avatar: undefined,
-            };
+            let mockUser: User;
+
+            // Demo credentials
+            if (email === 'demo@velto.app' && password === 'demo123') {
+              mockUser = {
+                id: 'demo-user',
+                name: 'Demo Gebruiker',
+                email: 'demo@velto.app',
+                avatar: undefined,
+              };
+            } else if (email.includes('@') && password.length >= 6) {
+              // Any valid-looking credentials
+              const name = email.split('@')[0];
+              mockUser = {
+                id: Date.now().toString(),
+                name: name.charAt(0).toUpperCase() + name.slice(1),
+                email: email,
+                avatar: undefined,
+              };
+            } else {
+              throw new Error('Invalid credentials');
+            }
 
             set({
               user: mockUser,
@@ -173,7 +189,28 @@ export const useUserStore = create<UserState>()(
           user: null,
           isAuthenticated: false,
           error: null,
+          // Reset subscription to default for demo purposes
+          subscription: {
+            plan: 'free',
+            invoiceLimit: 5,
+            invoicesUsed: 3,
+            renewalDate: new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+          },
+          // Reset settings to defaults
+          settings: {
+            notificationsEnabled: true,
+            emailNotifications: true,
+            darkMode: false,
+            language: 'nl',
+          },
         });
+
+        // Add a small delay to ensure state is updated before navigation
+        setTimeout(() => {
+          console.log('User signed out successfully');
+        }, 100);
       },
 
       updateUser: (updates) => {
@@ -261,7 +298,7 @@ export const useUserStore = create<UserState>()(
     {
       name: 'user-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      // Don't persist loading states and errors
+      // Don't persist loading states and errors, but do persist auth state
       partialize: (state) => ({
         user: state.user,
         companyInfo: state.companyInfo,
@@ -269,6 +306,17 @@ export const useUserStore = create<UserState>()(
         subscription: state.subscription,
         isAuthenticated: state.isAuthenticated,
       }),
+      // Add onRehydrateStorage to handle initial state properly
+      onRehydrateStorage: () => (state) => {
+        // If we have a user but isAuthenticated is false, fix it
+        if (state?.user && !state.isAuthenticated) {
+          state.isAuthenticated = true;
+        }
+        // If we don't have a user but isAuthenticated is true, fix it
+        if (!state?.user && state?.isAuthenticated) {
+          state.isAuthenticated = false;
+        }
+      },
     }
   )
 );
