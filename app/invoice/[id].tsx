@@ -307,7 +307,7 @@ export default function InvoiceDetail() {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="bg-white px-6 py-4 flex-row items-center justify-between shadow-sm">
+      <View className="px-6 py-4 flex-row items-center justify-between">
         <View className="flex-row items-center flex-1">
           <TouchableOpacity
             onPress={() => router.back()}
