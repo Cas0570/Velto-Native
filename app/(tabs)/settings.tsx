@@ -125,12 +125,13 @@ export default function Settings() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <PageHeader
-        title="Instellingen"
-        subtitle="Beheer je account en voorkeuren"
-      />
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <PageHeader
+          title="Instellingen"
+          subtitle="Beheer je account en voorkeuren"
+          className="mb-4"
+        />
 
-      <ScrollView className="flex-1 mt-4" showsVerticalScrollIndicator={false}>
         {/* Account Section */}
         <SettingsSection title="Account">
           <SettingsItem
@@ -263,32 +264,28 @@ export default function Settings() {
             <Text className="text-base font-JakartaSemiBold text-gray-800 mb-4">
               Deze maand
             </Text>
-            <View className="flex-row justify-between items-center mb-4">
-              <View className="flex-1">
-                <Text className="text-2xl font-JakartaBold text-primary-500">
+
+            {/* First Row - Two columns */}
+            <View className="flex-row justify-between items-center mb-6">
+              <View className="flex-1 items-center">
+                <Text className="text-3xl font-JakartaBold text-primary-500">
                   3
                 </Text>
-                <Text className="text-gray-600 font-Jakarta text-sm">
-                  Facturen aangemaakt
+                <Text className="text-gray-600 font-Jakarta text-sm text-center">
+                  Facturen
                 </Text>
               </View>
               <View className="flex-1 items-center">
-                <Text className="text-2xl font-JakartaBold text-blue-600">
+                <Text className="text-3xl font-JakartaBold text-blue-600">
                   {formatCurrency(4200)}
                 </Text>
-                <Text className="text-gray-600 font-Jakarta text-sm">
+                <Text className="text-gray-600 font-Jakarta text-sm text-center">
                   Totale waarde
                 </Text>
               </View>
-              <View className="flex-1 items-end">
-                <Text className="text-2xl font-JakartaBold text-green-600">
-                  1
-                </Text>
-                <Text className="text-gray-600 font-Jakarta text-sm">
-                  Betaald
-                </Text>
-              </View>
             </View>
+
+            {/* Progress Bar */}
             <View className="bg-gray-100 rounded-full h-2 mb-2">
               <View
                 className="bg-primary-500 h-2 rounded-full"
